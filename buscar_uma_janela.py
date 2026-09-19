@@ -35,12 +35,19 @@ def salvar_estado(estado):
         json.dump(estado, f, indent=2)
 
 
+def carregar_config():
+    config_path = os.path.join(os.path.dirname(__file__), "config.json")
+    with open(config_path, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
 def main():
-    url_base = os.environ["URL_BASE"]
-    data_inicio = datetime.strptime(os.environ["DATA_INICIO"], "%Y-%m-%d").date()
-    dias_totais = int(os.environ.get("DIAS_TOTAIS", 30))
-    duracao = int(os.environ.get("DURACAO", 8))
-    limite_preco = float(os.environ.get("LIMITE_PRECO", 22000))
+    config = carregar_config()
+    url_base = config["url_base"]
+    data_inicio = datetime.strptime(config["data_inicio"], "%Y-%m-%d").date()
+    dias_totais = int(config.get("dias_totais", 30))
+    duracao = int(config.get("duracao", 8))
+    limite_preco = float(config.get("limite_preco", 22000))
 
     janelas = gerar_janelas(data_inicio, dias_totais, duracao)
     estado = carregar_estado()
