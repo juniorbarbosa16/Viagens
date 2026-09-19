@@ -35,18 +35,12 @@ jobs:
           sudo apt-get update && sudo apt-get install -y xvfb
 
       - name: Rodar a busca da janela
-        env:
-          URL_BASE: ${{ secrets.URL_BASE }}
-          DATA_INICIO: "2026-09-19"   # ajuste pra data de início do período
-          DIAS_TOTAIS: "30"
-          DURACAO: "8"
-          LIMITE_PRECO: "22000"
         run: xvfb-run -a python buscar_uma_janela.py
 
       - name: Salvar resultado de volta no repositório
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add historico_precos.csv estado.json
+          git add historico_precos.csv estado.json config.json
           git diff --staged --quiet || git commit -m "Atualiza histórico de preços"
           git push
