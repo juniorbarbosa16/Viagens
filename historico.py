@@ -1,4 +1,4 @@
-""""
+"""
 historico.py
 ------------
 Grava cada rodada de verificação num CSV (data_verificacao, ida, volta,
