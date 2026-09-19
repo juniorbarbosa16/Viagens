@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rastreador de pacotes — LATAM Travel</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 720px; margin: 24px auto; padding: 0 16px; color: #222; }
+  h1 { font-size: 1.3rem; }
+  .status { color: #666; margin: 12px 0; font-size: 0.9rem; }
+  button {
+    background: #1a1a1a; color: white; border: none; padding: 10px 18px;
+    border-radius: 8px; font-size: 0.95rem; cursor: pointer;
+  }
+  table { width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 0.9rem; }
+  th, td { text-align: left; padding: 8px; border-bottom: 1px solid #eee; }
+  th { color: #555; font-size: 0.8rem; text-transform: uppercase; }
+  .preco { font-weight: 600; color: #1a7a3c; }
+  .falhou { color: #b33; font-size: 0.85rem; }
+  .vazio { color: #888; margin-top: 20px; }
+  .resumo { background: #f6f6f6; padding: 12px 16px; border-radius: 8px; margin-top: 16px; font-size: 0.9rem; }
+</style>
+</head>
+<body>
+  <h1>Rastreador de pacotes — LATAM Travel</h1>
+  <p class="status">
+    Roda sozinho na nuvem (GitHub Actions), uma busca a cada ~20 minutos.
+    Essa página só mostra o histórico já salvo — atualize pra ver o mais recente.
+  </p>
+
+  <button onclick="carregar()">Atualizar</button>
+  <div class="resumo" id="resumo"></div>
+  <div id="conteudo"></div>
+
+  <script>
+    async function carregar() {
+      const resumo = document.getElementById('resumo');
+      const conteudo = document.getElementById('conteudo');
+      resumo.textContent = 'Carregando...';
+      conteudo.innerHTML = '';
+
+      try {
+        // cache-busting pra não pegar versão antiga em cache do navegador/CDN
+        const resp = await fetch('historico_precos.csv?t=' + Date.now());
+        if (!resp.ok) {
+          resumo.textContent = 'Ainda não tem histórico salvo (a primeira busca ainda não rodou).';
+          return;
+        }
+        const texto = await resp.text();
+        const linhas = texto.trim().split('\n').slice(1).filter(Boolean);
+
+        const dados = linhas.map(linha => {
+          const partes = linha.split(',');
+          return {
+            data_verificacao: partes[0],
+            data_ida: partes[1],
+            data_volta: partes[2],
+            preco: partes[3],
+            abaixo_do_limite: partes[4],
+            observacao: partes.slice(5).join(','),
+          };
+        }).reverse();
+
+        const abaixo = dados.filter(d => d.abaixo_do_limite === 'True');
+        resumo.textContent = `${dados.length} janelas testadas até agora — ${abaixo.length} abaixo do limite.`;
+
+        if (dados.length === 0) {
+          conteudo.innerHTML = '<p class="vazio">Nenhum resultado ainda.</p>';
+          return;
+        }
+
+        let html = '<table><tr><th>Verificado em</th><th>Ida</th><th>Volta</th><th>Preço</th></tr>';
+        for (const d of dados) {
+          const precoTexto = d.preco
+            ? `R$ ${parseFloat(d.preco).toFixed(2)}`
+            : `<span class="falhou">${d.observacao || 'falhou'}</span>`;
+          const classe = d.abaixo_do_limite === 'True' ? 'preco' : '';
+          html += `<tr>
+            <td>${d.data_verificacao}</td>
+            <td>${d.data_ida}</td>
+            <td>${d.data_volta}</td>
+            <td class="${classe}">${precoTexto}</td>
+          </tr>`;
+        }
+        html += '</table>';
+        conteudo.innerHTML = html;
+      } catch (e) {
+        resumo.textContent = 'Erro ao carregar: ' + e;
+      }
+    }
+
+    carregar();
+  </script>
+</body>
+</html>
