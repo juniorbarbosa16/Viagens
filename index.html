@@ -7,6 +7,15 @@
 <style>
   body { font-family: system-ui, sans-serif; max-width: 720px; margin: 24px auto; padding: 0 16px; color: #222; }
   h1 { font-size: 1.3rem; }
+  h2 { font-size: 1.05rem; margin-top: 32px; border-top: 1px solid #eee; padding-top: 20px; }
+  label { display: block; margin-top: 12px; font-size: 0.85rem; color: #444; }
+  input, textarea {
+    width: 100%; box-sizing: border-box; padding: 8px; margin-top: 4px;
+    border: 1px solid #ccc; border-radius: 6px; font-size: 0.9rem;
+  }
+  textarea { resize: vertical; min-height: 60px; font-family: monospace; font-size: 0.75rem; }
+  .linha { display: flex; gap: 16px; }
+  .linha > div { flex: 1; }
   .status { color: #666; margin: 12px 0; font-size: 0.9rem; }
   button {
     background: #1a1a1a; color: white; border: none; padding: 10px 18px;
@@ -23,9 +32,47 @@
 </head>
 <body>
   <h1>Rastreador de pacotes — LATAM Travel</h1>
+
+  <h2>Configurar nova busca</h2>
+  <p class="status">
+    Preenche os campos, clica no botão — vai abrir uma aba do GitHub com a
+    issue já pronta, você só confirma clicando em "Submit new issue" (já logado).
+    Em poucos minutos o robô passa a usar essa busca automaticamente.
+  </p>
+
+  <label>URL de uma busca já feita (latamtravel-brasil.decolar.com/...)
+    <textarea id="urlBase" placeholder="Cole aqui a URL completa..."></textarea>
+  </label>
+  <div class="linha">
+    <div>
+      <label>Data de início
+        <input type="date" id="dataInicio">
+      </label>
+    </div>
+    <div>
+      <label>Duração da viagem (dias)
+        <input type="number" id="duracao" value="8" min="1">
+      </label>
+    </div>
+  </div>
+  <div class="linha">
+    <div>
+      <label>Verificar quantos dias à frente
+        <input type="number" id="diasTotais" value="30" min="1">
+      </label>
+    </div>
+    <div>
+      <label>Limite de preço (R$)
+        <input type="number" id="limitePreco" value="22000" min="0">
+      </label>
+    </div>
+  </div>
+  <button onclick="abrirIssue()">Abrir configuração nova (1 clique de confirmar)</button>
+
+  <h2>Histórico de verificações</h2>
   <p class="status">
     Roda sozinho na nuvem (GitHub Actions), uma busca a cada ~20 minutos.
-    Essa página só mostra o histórico já salvo — atualize pra ver o mais recente.
+    Essa seção só mostra o histórico já salvo — atualize pra ver o mais recente.
   </p>
 
   <button onclick="carregar()">Atualizar</button>
@@ -33,6 +80,32 @@
   <div id="conteudo"></div>
 
   <script>
+    // AJUSTE AQUI se você trocar o nome do repositório/usuário:
+    const REPO = "juniorbarbosa16/Viagens";
+
+    document.getElementById('dataInicio').value = new Date().toISOString().split('T')[0];
+
+    function abrirIssue() {
+      const urlBase = document.getElementById('urlBase').value.trim();
+      if (!urlBase) {
+        alert('Cole a URL de uma busca feita manualmente antes de continuar.');
+        return;
+      }
+
+      const config = {
+        url_base: urlBase,
+        data_inicio: document.getElementById('dataInicio').value,
+        dias_totais: parseInt(document.getElementById('diasTotais').value, 10),
+        duracao: parseInt(document.getElementById('duracao').value, 10),
+        limite_preco: parseFloat(document.getElementById('limitePreco').value),
+      };
+
+      const titulo = encodeURIComponent('config: nova busca');
+      const corpo = encodeURIComponent(JSON.stringify(config, null, 2));
+      const url = `https://github.com/${REPO}/issues/new?title=${titulo}&body=${corpo}`;
+
+      window.open(url, '_blank');
+    }
     async function carregar() {
       const resumo = document.getElementById('resumo');
       const conteudo = document.getElementById('conteudo');
