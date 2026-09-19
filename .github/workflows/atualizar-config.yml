@@ -1,0 +1,72 @@
+name: Atualizar configuração de busca
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  atualizar:
+    if: startsWith(github.event.issue.title, 'config:')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Salvar corpo da issue em arquivo
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            fs.writeFileSync('/tmp/issue_body.txt', context.payload.issue.body || '');
+
+      - name: Validar e aplicar a nova configuração
+        id: aplicar
+        run: |
+          python3 -c "
+          import json, sys
+          with open('/tmp/issue_body.txt', encoding='utf-8') as f:
+              texto = f.read()
+          try:
+              config = json.loads(texto)
+          except Exception as e:
+              print(f'ERRO: JSON inválido — {e}')
+              sys.exit(1)
+          obrigatorios = ['url_base', 'data_inicio', 'dias_totais', 'duracao', 'limite_preco']
+          faltando = [c for c in obrigatorios if c not in config]
+          if faltando:
+              print(f'ERRO: faltando campos {faltando}')
+              sys.exit(1)
+          with open('config.json', 'w', encoding='utf-8') as f:
+              json.dump(config, f, indent=2, ensure_ascii=False)
+          print('Configuração aplicada com sucesso.')
+          "
+
+      - name: Reiniciar o ciclo de verificação
+        if: success()
+        run: echo '{"proximo_offset": 0, "ciclo_iniciado_em": null}' > estado.json
+
+      - name: Commitar mudanças
+        if: success()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add config.json estado.json
+          git commit -m "Atualiza configuração via issue #${{ github.event.issue.number }}"
+          git push
+
+      - name: Fechar a issue com confirmação
+        if: success()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue close ${{ github.event.issue.number }} --comment "✅ Configuração atualizada! O robô vai usar essa busca a partir da próxima execução (em até 20 minutos), começando o ciclo do zero."
+
+      - name: Comentar erro na issue (se algo deu errado)
+        if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue comment ${{ github.event.issue.number }} --body "❌ Algo deu errado ao processar essa configuração. Confira se o corpo da issue é um JSON válido com os campos: url_base, data_inicio, dias_totais, duracao, limite_preco."
