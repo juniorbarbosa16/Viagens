@@ -134,7 +134,14 @@ def buscar_preco_janela(page, url_base: str, ida_original: str, volta_original: 
 
     try:
         page.goto(url, timeout=60000, wait_until="domcontentloaded")
-        page.wait_for_timeout(4000)  # dá tempo da página React renderizar o preço
+        try:
+            # Espera a página realmente "assentar" (sem requisições pendentes).
+            # Alguns sites nunca ficam 100% parados — nesse caso, seguimos
+            # em frente mesmo assim, e a espera fixa abaixo cobre o resto.
+            page.wait_for_load_state("networkidle", timeout=15000)
+        except Exception:
+            pass
+        page.wait_for_timeout(6000)  # tempo extra pro React renderizar o preço
     except Exception as e:
         return ResultadoBusca(
             data_ida=data_ida.isoformat(), data_volta=data_volta.isoformat(),
