@@ -3,87 +3,338 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Rastreador de pacotes — LATAM Travel</title>
+<title>Punta Cana — Rastreador de pacotes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  body { font-family: system-ui, sans-serif; max-width: 720px; margin: 24px auto; padding: 0 16px; color: #222; }
-  h1 { font-size: 1.3rem; }
-  h2 { font-size: 1.05rem; margin-top: 32px; border-top: 1px solid #eee; padding-top: 20px; }
-  label { display: block; margin-top: 12px; font-size: 0.85rem; color: #444; }
+  :root {
+    --navy: #0E3B43;
+    --navy-deep: #092a30;
+    --sand: #F1EFE6;
+    --sand-card: #FFFDF8;
+    --coral: #E1623D;
+    --gold: #D9A441;
+    --teal-ok: #1F7A5C;
+    --ink: #182427;
+    --ink-soft: #5B6B6C;
+    --line: #E3DFD1;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--sand);
+    color: var(--ink);
+    font-family: 'IBM Plex Sans', system-ui, sans-serif;
+    line-height: 1.5;
+  }
+
+  a { color: inherit; }
+
+  /* ---------- HERO ---------- */
+  .hero {
+    background: linear-gradient(165deg, var(--navy) 0%, var(--navy-deep) 100%);
+    color: #F6F0E4;
+    padding: 52px 24px 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::after {
+    content: "";
+    position: absolute;
+    right: -60px; top: -60px;
+    width: 220px; height: 220px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(217,164,65,0.35) 0%, rgba(217,164,65,0) 70%);
+  }
+  .hero-inner {
+    max-width: 640px;
+    margin: 0 auto;
+    position: relative;
+  }
+  .eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+    color: #B9C9C4;
+    margin: 0 0 14px;
+  }
+  .hero h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: clamp(2.1rem, 7vw, 2.8rem);
+    line-height: 1.08;
+    margin: 0 0 14px;
+  }
+  .hero h1 em {
+    font-style: italic;
+    font-weight: 500;
+    color: var(--gold);
+  }
+  .hero p.lede {
+    font-size: 1rem;
+    color: #CFDAD5;
+    max-width: 42ch;
+    margin: 0 0 28px;
+  }
+  .best-price {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 10px;
+    background: rgba(246,240,228,0.08);
+    border: 1px solid rgba(246,240,228,0.18);
+    border-radius: 10px;
+    padding: 14px 18px;
+  }
+  .best-price .label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    color: #9FB3AE;
+  }
+  .best-price .value {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 1.6rem;
+    color: #F6F0E4;
+  }
+  .best-price .value.empty {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 0.95rem;
+    color: #CFDAD5;
+    font-weight: 400;
+  }
+
+  /* ---------- MAIN ---------- */
+  main {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 40px 24px 60px;
+  }
+
+  section + section { margin-top: 44px; }
+
+  h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 1.4rem;
+    margin: 0 0 6px;
+  }
+  .section-note {
+    color: var(--ink-soft);
+    font-size: 0.88rem;
+    margin: 0 0 20px;
+    max-width: 48ch;
+  }
+
+  /* ---------- FORM ---------- */
+  .card {
+    background: var(--sand-card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 22px;
+  }
+  label {
+    display: block;
+    font-size: 0.82rem;
+    color: var(--ink-soft);
+    margin-top: 16px;
+  }
+  label:first-child { margin-top: 0; }
   input, textarea {
-    width: 100%; box-sizing: border-box; padding: 8px; margin-top: 4px;
-    border: 1px solid #ccc; border-radius: 6px; font-size: 0.9rem;
+    width: 100%;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 0.92rem;
+    padding: 9px 10px;
+    margin-top: 5px;
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    background: #fff;
+    color: var(--ink);
   }
-  textarea { resize: vertical; min-height: 60px; font-family: monospace; font-size: 0.75rem; }
-  .linha { display: flex; gap: 16px; }
-  .linha > div { flex: 1; }
-  .status { color: #666; margin: 12px 0; font-size: 0.9rem; }
+  textarea {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.76rem;
+    resize: vertical;
+    min-height: 56px;
+  }
+  .row { display: flex; gap: 14px; }
+  .row > div { flex: 1; }
+
   button {
-    background: #1a1a1a; color: white; border: none; padding: 10px 18px;
-    border-radius: 8px; font-size: 0.95rem; cursor: pointer;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 500;
+    font-size: 0.92rem;
+    border: none;
+    border-radius: 8px;
+    padding: 11px 18px;
+    cursor: pointer;
   }
-  table { width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 0.9rem; }
-  th, td { text-align: left; padding: 8px; border-bottom: 1px solid #eee; }
-  th { color: #555; font-size: 0.8rem; text-transform: uppercase; }
-  .preco { font-weight: 600; color: #1a7a3c; }
-  .falhou { color: #b33; font-size: 0.85rem; }
-  .vazio { color: #888; margin-top: 20px; }
-  .resumo { background: #f6f6f6; padding: 12px 16px; border-radius: 8px; margin-top: 16px; font-size: 0.9rem; }
+  .btn-primary {
+    background: var(--coral);
+    color: #fff;
+    margin-top: 20px;
+  }
+  .btn-primary:hover { background: #c8532f; }
+  .btn-ghost {
+    background: transparent;
+    color: var(--navy);
+    border: 1px solid var(--line);
+  }
+  .btn-ghost:hover { border-color: var(--navy); }
+
+  /* ---------- HISTÓRICO ---------- */
+  .panel-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .summary {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--ink-soft);
+    margin: 4px 0 20px;
+  }
+
+  .ticket {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 14px 16px;
+    background: var(--sand-card);
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--line);
+    border-radius: 8px;
+    margin-bottom: 10px;
+  }
+  .ticket.ok {
+    border-left-color: var(--teal-ok);
+  }
+  .ticket .route {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.86rem;
+    color: var(--ink);
+  }
+  .ticket .checked {
+    font-size: 0.74rem;
+    color: var(--ink-soft);
+    margin-top: 2px;
+  }
+  .ticket .price {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 1rem;
+    font-weight: 500;
+    white-space: nowrap;
+    text-align: right;
+  }
+  .ticket.ok .price { color: var(--teal-ok); }
+  .ticket .price.fail {
+    font-size: 0.78rem;
+    color: #A65039;
+    font-weight: 400;
+  }
+  .empty-state {
+    color: var(--ink-soft);
+    font-size: 0.9rem;
+    padding: 20px 0;
+  }
+
+  footer {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 0 24px 40px;
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+  }
 </style>
 </head>
 <body>
-  <h1>Rastreador de pacotes — LATAM Travel</h1>
 
-  <h2>Configurar nova busca</h2>
-  <p class="status">
-    Preenche os campos, clica no botão — vai abrir uma aba do GitHub com a
-    issue já pronta, você só confirma clicando em "Submit new issue" (já logado).
-    Em poucos minutos o robô passa a usar essa busca automaticamente.
-  </p>
+  <header class="hero">
+    <div class="hero-inner">
+      <p class="eyebrow">RASTREADOR DE PACOTES · CARIBE</p>
+      <h1>Punta Cana,<br><em>quando fica bom?</em></h1>
+      <p class="lede">Verifica o preço do pacote em várias janelas de data e guarda o histórico — sem você precisar ficar checando o site toda hora.</p>
+      <div class="best-price">
+        <span class="label">MENOR JÁ VISTO</span>
+        <span class="value" id="heroPreco">—</span>
+      </div>
+    </div>
+  </header>
 
-  <label>URL de uma busca já feita (latamtravel-brasil.decolar.com/...)
-    <textarea id="urlBase" placeholder="Cole aqui a URL completa..."></textarea>
-  </label>
-  <div class="linha">
-    <div>
-      <label>Data de início
-        <input type="date" id="dataInicio">
-      </label>
-    </div>
-    <div>
-      <label>Duração da viagem (dias)
-        <input type="number" id="duracao" value="8" min="1">
-      </label>
-    </div>
-  </div>
-  <div class="linha">
-    <div>
-      <label>Verificar quantos dias à frente
-        <input type="number" id="diasTotais" value="30" min="1">
-      </label>
-    </div>
-    <div>
-      <label>Limite de preço (R$)
-        <input type="number" id="limitePreco" value="22000" min="0">
-      </label>
-    </div>
-  </div>
-  <button onclick="abrirIssue()">Abrir configuração nova (1 clique de confirmar)</button>
+  <main>
+    <section>
+      <h2>Configurar busca</h2>
+      <p class="section-note">Preenche os campos, clica no botão — abre uma issue pronta no GitHub, você só confirma. Em poucos minutos a busca no seu PC já usa isso.</p>
+      <div class="card">
+        <label>URL de uma busca já feita (latamtravel-brasil.decolar.com/...)
+          <textarea id="urlBase" placeholder="Cole aqui a URL completa..."></textarea>
+        </label>
+        <div class="row">
+          <div>
+            <label>Data de início
+              <input type="date" id="dataInicio">
+            </label>
+          </div>
+          <div>
+            <label>Duração da viagem (dias)
+              <input type="number" id="duracao" value="8" min="1">
+            </label>
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label>Verificar quantos dias à frente
+              <input type="number" id="diasTotais" value="30" min="1">
+            </label>
+          </div>
+          <div>
+            <label>Limite de preço (R$)
+              <input type="number" id="limitePreco" value="22000" min="0">
+            </label>
+          </div>
+        </div>
+        <button class="btn-primary" onclick="abrirIssue()">Abrir configuração nova</button>
+      </div>
+    </section>
 
-  <h2>Histórico de verificações</h2>
-  <p class="status">
-    Roda sozinho na nuvem (GitHub Actions), uma busca a cada ~20 minutos.
-    Essa seção só mostra o histórico já salvo — atualize pra ver o mais recente.
-  </p>
+    <section>
+      <div class="panel-head">
+        <h2>Histórico</h2>
+        <button class="btn-ghost" onclick="carregar()">Atualizar</button>
+      </div>
+      <p class="section-note">Roda no seu PC (o site bloqueia servidores na nuvem) e sincroniza aqui a cada busca.</p>
+      <p class="summary" id="resumo">Carregando...</p>
+      <div id="conteudo"></div>
+    </section>
+  </main>
 
-  <button onclick="carregar()">Atualizar</button>
-  <div class="resumo" id="resumo"></div>
-  <div id="conteudo"></div>
+  <footer>
+    juniorbarbosa16/Viagens — dados só visíveis pra quem tiver este link.
+  </footer>
 
   <script>
-    // AJUSTE AQUI se você trocar o nome do repositório/usuário:
     const REPO = "juniorbarbosa16/Viagens";
 
     document.getElementById('dataInicio').value = new Date().toISOString().split('T')[0];
+
+    function formatarData(iso) {
+      const [ano, mes, dia] = iso.split('-');
+      return `${dia}/${mes}/${ano}`;
+    }
+
+    function formatarDataHora(isoComHora) {
+      const [dataParte, horaParte] = isoComHora.split(' ');
+      return `${formatarData(dataParte)} ${horaParte || ''}`.trim();
+    }
+
+    function formatarPreco(valor) {
+      return valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
 
     function abrirIssue() {
       const urlBase = document.getElementById('urlBase').value.trim();
@@ -106,17 +357,18 @@
 
       window.open(url, '_blank');
     }
+
     async function carregar() {
       const resumo = document.getElementById('resumo');
       const conteudo = document.getElementById('conteudo');
+      const heroPreco = document.getElementById('heroPreco');
       resumo.textContent = 'Carregando...';
       conteudo.innerHTML = '';
 
       try {
-        // cache-busting pra não pegar versão antiga em cache do navegador/CDN
         const resp = await fetch('historico_precos.csv?t=' + Date.now());
         if (!resp.ok) {
-          resumo.textContent = 'Ainda não tem histórico salvo (a primeira busca ainda não rodou).';
+          resumo.textContent = 'Ainda sem histórico — a primeira busca ainda não rodou.';
           return;
         }
         const texto = await resp.text();
@@ -134,28 +386,38 @@
           };
         }).reverse();
 
+        const comPreco = dados.filter(d => d.preco);
+        if (comPreco.length > 0) {
+          const menor = Math.min(...comPreco.map(d => parseFloat(d.preco)));
+          heroPreco.textContent = `R$ ${formatarPreco(menor)}`;
+          heroPreco.classList.remove('empty');
+        } else {
+          heroPreco.textContent = 'ainda sem dados';
+          heroPreco.classList.add('empty');
+        }
+
         const abaixo = dados.filter(d => d.abaixo_do_limite === 'True');
-        resumo.textContent = `${dados.length} janelas testadas até agora — ${abaixo.length} abaixo do limite.`;
+        resumo.textContent = `${dados.length} janelas testadas — ${abaixo.length} abaixo do limite.`;
 
         if (dados.length === 0) {
-          conteudo.innerHTML = '<p class="vazio">Nenhum resultado ainda.</p>';
+          conteudo.innerHTML = '<p class="empty-state">Nenhuma busca rodou ainda. Assim que rodar, os resultados aparecem aqui.</p>';
           return;
         }
 
-        let html = '<table><tr><th>Verificado em</th><th>Ida</th><th>Volta</th><th>Preço</th></tr>';
+        let html = '';
         for (const d of dados) {
-          const precoTexto = d.preco
-            ? `R$ ${parseFloat(d.preco).toFixed(2)}`
-            : `<span class="falhou">${d.observacao || 'falhou'}</span>`;
-          const classe = d.abaixo_do_limite === 'True' ? 'preco' : '';
-          html += `<tr>
-            <td>${d.data_verificacao}</td>
-            <td>${d.data_ida}</td>
-            <td>${d.data_volta}</td>
-            <td class="${classe}">${precoTexto}</td>
-          </tr>`;
+          const ok = d.abaixo_do_limite === 'True';
+          const precoHtml = d.preco
+            ? `R$ ${formatarPreco(parseFloat(d.preco))}`
+            : `<span class="price fail">${d.observacao || 'não encontrado'}</span>`;
+          html += `<div class="ticket ${ok ? 'ok' : ''}">
+            <div>
+              <div class="route">${formatarData(d.data_ida)} → ${formatarData(d.data_volta)}</div>
+              <div class="checked">verificado ${formatarDataHora(d.data_verificacao)}</div>
+            </div>
+            <div class="price">${precoHtml}</div>
+          </div>`;
         }
-        html += '</table>';
         conteudo.innerHTML = html;
       } catch (e) {
         resumo.textContent = 'Erro ao carregar: ' + e;
