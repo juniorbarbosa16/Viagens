@@ -46,7 +46,8 @@ jobs:
 
       - name: Reiniciar o ciclo de verificação
         if: success()
-        run: echo '{"proximo_offset": 0, "ciclo_iniciado_em": null}' > estado.json
+        run: |
+          echo '{"proximo_offset": 0, "ciclo_iniciado_em": null}' > estado.json
 
       - name: Commitar mudanças
         if: success()
